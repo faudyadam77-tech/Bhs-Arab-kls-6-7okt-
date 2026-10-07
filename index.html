@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -16,9 +15,7 @@
             color: #e0e0e0;
             padding: 20px;
         }
-
         .container { max-width: 800px; margin: 0 auto; }
-
         .header {
             text-align: center;
             padding: 30px 20px;
@@ -27,10 +24,8 @@
             margin-bottom: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .header h1 { font-size: 1.9em; color: #f8c537; margin-bottom: 10px; }
         .header p { font-size: 0.95em; color: #a0c4ff; line-height: 1.7; }
-
         .student-info {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -41,7 +36,6 @@
             border: 1px solid rgba(248, 197, 55, 0.25);
             border-radius: 12px;
         }
-
         .student-info input {
             padding: 10px 14px;
             background: rgba(255, 255, 255, 0.05);
@@ -50,10 +44,8 @@
             color: #fff;
             font-size: 0.95em;
         }
-
         .student-info input:focus { outline: none; border-color: #f8c537; }
         .student-info input::placeholder { color: #888; }
-
         .score-board {
             display: flex;
             justify-content: center;
@@ -64,11 +56,9 @@
             border: 1px solid rgba(248, 197, 55, 0.25);
             margin-bottom: 16px;
         }
-
         .score-item { text-align: center; }
         .score-item .label { font-size: 0.75em; color: #888; text-transform: uppercase; letter-spacing: 1px; }
         .score-item .value { font-size: 1.7em; font-weight: bold; color: #f8c537; }
-
         .progress-bar {
             width: 100%;
             height: 6px;
@@ -77,7 +67,6 @@
             margin-bottom: 20px;
             overflow: hidden;
         }
-
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #f8c537, #ff6b6b);
@@ -85,8 +74,7 @@
             transition: width 0.5s ease;
             width: 0%;
         }
-
-        .toggle-ref, .drive-settings-btn, .check-folder-btn {
+        .toggle-ref, .check-folder-btn {
             display: block;
             width: 100%;
             padding: 12px;
@@ -97,29 +85,18 @@
             margin-bottom: 10px;
             border: 1px solid;
         }
-
         .toggle-ref {
             background: rgba(160, 196, 255, 0.08);
             border-color: rgba(160, 196, 255, 0.25);
             color: #a0c4ff;
         }
-
-        .drive-settings-btn {
-            background: rgba(46, 213, 115, 0.08);
-            border-color: rgba(46, 213, 115, 0.25);
-            color: #2ed573;
-        }
-
         .check-folder-btn {
             background: rgba(248, 197, 55, 0.08);
             border-color: rgba(248, 197, 55, 0.25);
             color: #f8c537;
         }
-
         .toggle-ref:hover { background: rgba(160, 196, 255, 0.15); }
-        .drive-settings-btn:hover { background: rgba(46, 213, 115, 0.15); }
         .check-folder-btn:hover { background: rgba(248, 197, 55, 0.15); }
-
         .folder-status {
             padding: 12px 16px;
             border-radius: 10px;
@@ -128,7 +105,6 @@
             display: none;
             line-height: 1.6;
         }
-
         .folder-status.show { display: block; }
         .folder-status.success {
             background: rgba(46, 213, 115, 0.1);
@@ -145,13 +121,7 @@
             border: 1px solid rgba(248, 197, 55, 0.3);
             color: #f8c537;
         }
-
-        .folder-status a {
-            color: inherit;
-            text-decoration: underline;
-            font-weight: bold;
-        }
-
+        .folder-status a { color: inherit; text-decoration: underline; font-weight: bold; }
         .reference-table {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -159,11 +129,8 @@
             padding: 20px;
             margin-bottom: 24px;
         }
-
         .reference-table h3 { color: #f8c537; margin-bottom: 14px; text-align: center; font-size: 1em; }
-
         .ref-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-
         .ref-item {
             display: flex;
             align-items: center;
@@ -173,13 +140,10 @@
             border-radius: 6px;
             font-size: 0.85em;
         }
-
         .ref-item .num { font-weight: bold; color: #f8c537; min-width: 22px; }
         .ref-item .arabic-text { color: #a0c4ff; direction: rtl; font-size: 1.1em; font-family: 'Amiri', serif; }
         .ref-item .latin { color: #777; font-style: italic; font-size: 0.9em; }
-
         .hidden { display: none; }
-
         .challenge-title {
             font-size: 1.15em;
             color: #f8c537;
@@ -190,9 +154,7 @@
             border-left: 4px solid #f8c537;
             border-radius: 0 8px 8px 0;
         }
-
         .challenge-desc { font-size: 0.85em; color: #888; margin: -8px 0 14px 20px; font-style: italic; }
-
         .question-card {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -201,16 +163,11 @@
             margin-bottom: 16px;
             transition: border-color 0.3s ease;
         }
-
         .question-card:hover { border-color: rgba(248, 197, 55, 0.2); }
-
         .question-label { font-size: 0.75em; color: #f8c537; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-
         .question-text { font-size: 1.05em; color: #fff; margin-bottom: 18px; line-height: 1.7; }
         .question-text .arabic { font-size: 1.3em; color: #a0c4ff; direction: rtl; font-family: 'Amiri', serif; display: inline-block; }
-
         .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
         .option-btn {
             padding: 12px 14px;
             background: rgba(255, 255, 255, 0.04);
@@ -223,18 +180,15 @@
             text-align: center;
             line-height: 1.5;
         }
-
         .option-btn:hover { background: rgba(248, 197, 55, 0.08); border-color: rgba(248, 197, 55, 0.5); transform: translateY(-1px); }
         .option-btn.correct { background: rgba(46, 213, 115, 0.15); border-color: #2ed573; color: #2ed573; }
         .option-btn.wrong { background: rgba(255, 71, 87, 0.15); border-color: #ff4757; color: #ff4757; }
         .option-btn.disabled { pointer-events: none; opacity: 0.5; }
         .option-btn.disabled.correct { opacity: 1; }
-
         .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88em; line-height: 1.6; display: none; }
         .feedback.show { display: block; }
         .feedback.correct { background: rgba(46, 213, 115, 0.08); border: 1px solid rgba(46, 213, 115, 0.25); color: #2ed573; }
         .feedback.wrong { background: rgba(255, 71, 87, 0.08); border: 1px solid rgba(255, 71, 87, 0.25); color: #ff6b7a; }
-
         .btn-submit {
             display: block;
             width: 100%;
@@ -249,9 +203,7 @@
             transition: all 0.3s ease;
             margin-top: 24px;
         }
-
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(248, 197, 55, 0.3); }
-
         .result-screen {
             display: none;
             text-align: center;
@@ -260,12 +212,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
         }
-
         .result-screen.show { display: block; }
         .result-screen h2 { font-size: 1.8em; color: #f8c537; margin-bottom: 12px; }
         .result-screen .final-score { font-size: 3em; font-weight: bold; color: #fff; margin: 16px 0; }
         .result-screen .message { font-size: 1em; color: #a0c4ff; margin-bottom: 24px; line-height: 1.7; }
-
         .btn-restart, .btn-pdf {
             display: inline-block;
             padding: 14px 30px;
@@ -277,70 +227,9 @@
             transition: all 0.3s ease;
             margin: 5px;
         }
-
         .btn-restart { background: linear-gradient(135deg, #f8c537, #e8a820); color: #1a1a2e; }
         .btn-pdf { background: linear-gradient(135deg, #2ed573, #1eae5f); color: #fff; }
         .btn-restart:hover, .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: #1a1a2e;
-            border: 1px solid rgba(248, 197, 55, 0.3);
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal h3 { color: #f8c537; margin-bottom: 16px; }
-        .modal p { color: #ccc; line-height: 1.7; margin-bottom: 12px; font-size: 0.95em; }
-
-        .modal label { display: block; color: #a0c4ff; margin: 12px 0 6px; font-size: 0.9em; }
-
-        .modal input, .modal textarea {
-            width: 100%;
-            padding: 10px 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.9em;
-            font-family: monospace;
-        }
-
-        .modal textarea { min-height: 180px; resize: vertical; }
-
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-
-        .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.95em;
-        }
-
-        .modal-btn.primary { background: #f8c537; color: #1a1a2e; }
-        .modal-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
-
-        /* PDF Template */
         #pdfTemplate {
             position: absolute;
             left: -9999px;
@@ -351,23 +240,19 @@
             color: #2c2c2c;
             padding: 40px 50px;
         }
-
         .pdf-paper {
             background-image: repeating-linear-gradient(transparent, transparent 31px, #d4c5a0 32px);
             min-height: 1000px;
             padding: 20px 0;
         }
-
         .pdf-header {
             text-align: center;
             border-bottom: 3px double #8b4513;
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
-
         .pdf-header h2 { font-family: 'Kalam', cursive; font-size: 28px; color: #8b4513; margin-bottom: 5px; }
         .pdf-header .subtitle { font-size: 16px; color: #555; font-style: italic; }
-
         .pdf-student-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -375,10 +260,8 @@
             margin-bottom: 20px;
             font-size: 18px;
         }
-
         .pdf-student-info div { border-bottom: 1px solid #8b4513; padding: 4px 8px; }
         .pdf-student-info .label-pdf { color: #8b4513; font-weight: bold; }
-
         .pdf-grade-box {
             position: absolute;
             top: 40px;
@@ -394,7 +277,6 @@
             transform: rotate(-8deg);
             background: rgba(255,255,255,0.5);
         }
-
         .pdf-grade-box .nilai-angka {
             font-family: 'Caveat', cursive;
             font-size: 56px;
@@ -402,9 +284,7 @@
             color: #c0392b;
             line-height: 1;
         }
-
         .pdf-grade-box .nilai-label { font-size: 12px; color: #c0392b; font-weight: bold; }
-
         .pdf-section-title {
             font-family: 'Kalam', cursive;
             font-size: 20px;
@@ -414,19 +294,15 @@
             border-bottom: 1px dashed #8b4513;
             padding-bottom: 4px;
         }
-
         .pdf-question { margin-bottom: 10px; font-size: 16px; line-height: 1.6; padding: 6px 0; }
         .pdf-question .q-num { font-weight: bold; color: #8b4513; margin-right: 8px; }
-
         .pdf-answer { display: inline-block; margin-left: 10px; padding: 2px 10px; font-family: 'Caveat', cursive; font-size: 20px; }
         .pdf-answer.benar { color: #27ae60; }
         .pdf-answer.salah { color: #c0392b; text-decoration: line-through; }
         .pdf-answer.koreksi { color: #2980b9; font-weight: bold; }
-
         .pdf-mark { display: inline-block; margin-left: 8px; font-size: 22px; font-weight: bold; }
         .pdf-mark.cek { color: #27ae60; }
         .pdf-mark.silang { color: #c0392b; }
-
         .pdf-footer {
             margin-top: 40px;
             display: flex;
@@ -435,11 +311,8 @@
             border-top: 2px solid #8b4513;
             padding-top: 15px;
         }
-
         .pdf-comment { font-family: 'Kalam', cursive; font-size: 20px; color: #c0392b; max-width: 50%; line-height: 1.4; }
-
         .pdf-signature { text-align: center; font-family: 'Dancing Script', cursive; font-size: 24px; color: #2c3e50; }
-
         .pdf-signature .garis-ttd {
             border-top: 1px solid #2c3e50;
             width: 180px;
@@ -449,7 +322,6 @@
             font-size: 14px;
             color: #555;
         }
-
         @media (max-width: 600px) {
             .options { grid-template-columns: 1fr; }
             .ref-grid { grid-template-columns: 1fr; }
@@ -492,8 +364,7 @@
         </div>
 
         <button class="toggle-ref" id="toggleRefBtn" onclick="toggleReference()">Buka Kamus Saku Detektif</button>
-        <button class="drive-settings-btn" onclick="showDriveModal()">⚙️ Pengaturan Google Drive Guru</button>
-        <button class="check-folder-btn" onclick="checkFolder()">📁 Cek / Buat Folder "Detektif Angka"</button>
+        <button class="check-folder-btn" onclick="checkFolder()">📁 Cek / Buat Folder "Detektif Angka" di Drive Guru</button>
 
         <div class="folder-status" id="folderStatus"></div>
 
@@ -719,31 +590,24 @@
 
     </div>
 
-    <!-- Modal Pengaturan Drive -->
-    <div class="modal-overlay" id="driveModal">
-        <div class="modal">
-            <h3>⚙️ Pengaturan Google Drive</h3>
-            <p>Agar PDF lembar jawaban siswa otomatis tersimpan ke folder <strong>"Detektif Angka"</strong> di Google Drive Anda, ikuti langkah berikut:</p>
-            <p><strong>1.</strong> Buka <a href="https://script.google.com" target="_blank" style="color:#f8c537">script.google.com</a> → Buat proyek baru.</p>
-            <p><strong>2.</strong> Salin kode <code>Code.gs</code> yang diberikan guru ke editor.</p>
-            <p><strong>3.</strong> Klik <em>Deploy</em> → <em>New deployment</em> → Type: <em>Web app</em> → Execute as: <em>Me</em> → Who has access: <em>Anyone</em> → Deploy.</p>
-            <p><strong>4.</strong> Salin URL Web App yang muncul, lalu tempel di bawah:</p>
-            <label>URL Web App:</label>
-            <input type="text" id="driveUrl" placeholder="https://script.google.com/macros/s/.../exec">
-            <p style="font-size:0.85em; color:#888; margin-top:10px;">💡 Folder <strong>"Detektif Angka"</strong> akan dibuat otomatis di Google Drive Anda saat Anda klik tombol "Cek / Buat Folder".</p>
-            <div class="modal-buttons">
-                <button class="modal-btn secondary" onclick="closeDriveModal()">Batal</button>
-                <button class="modal-btn primary" onclick="saveDriveSettings()">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PDF Template -->
     <div id="pdfTemplate">
         <div class="pdf-paper" id="pdfContent"></div>
     </div>
 
     <script>
+        /* ============================================================
+         * ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN URL WEB APP KAMU!
+         * ============================================================
+         * Cara dapat URL:
+         * 1. Buka script.google.com → buat proyek baru
+         * 2. Paste kode Code.gs yang sudah diberikan
+         * 3. Deploy → New deployment → Web app → Execute as: Me → Anyone → Deploy
+         * 4. Copy URL yang muncul (format: https://script.google.com/macros/s/.../exec)
+         * 5. Paste di bawah ini (ganti PASTE_URL_APPS_SCRIPT_DI_SINI)
+         */
+        const DRIVE_URL = 'https://script.google.com/macros/s/AKfycbxFPtciS3BrvSzWysdwrKLy5nB_6nKC0tBDuGHfzdqdzNguU31MSzxfyzayliKf8K6iIw/exec';
+        /* ============================================================ */
+
         const TOTAL = 14;
 
         const key = {
@@ -897,38 +761,12 @@
         }
 
         // ===================== GOOGLE DRIVE =====================
-        function showDriveModal() {
-            const saved = JSON.parse(localStorage.getItem('driveSettings') || '{}');
-            if (saved.url) document.getElementById('driveUrl').value = saved.url;
-            document.getElementById('driveModal').classList.add('show');
-        }
-
-        function closeDriveModal() {
-            document.getElementById('driveModal').classList.remove('show');
-        }
-
-        function saveDriveSettings() {
-            const url = document.getElementById('driveUrl').value.trim();
-            if (!url) {
-                alert('URL Web App wajib diisi!');
-                return;
-            }
-            localStorage.setItem('driveSettings', JSON.stringify({ url }));
-            alert('✓ Pengaturan tersimpan!');
-            closeDriveModal();
-        }
-
-        /**
-         * Cek / Buat Folder "Detektif Angka" di Google Drive guru
-         * Memanggil doGet Apps Script dengan action=checkFolder
-         */
         async function checkFolder() {
             const statusEl = document.getElementById('folderStatus');
-            const settings = JSON.parse(localStorage.getItem('driveSettings') || '{}');
 
-            if (!settings.url) {
+            if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
                 statusEl.className = 'folder-status show error';
-                statusEl.innerHTML = '⚠️ URL Web App belum diatur. Silakan klik <strong>"Pengaturan Google Drive Guru"</strong> terlebih dahulu.';
+                statusEl.innerHTML = '⚠️ URL Web App belum diatur. Silakan buka file HTML ini dengan text editor, cari baris <code>const DRIVE_URL = ...</code>, lalu ganti dengan URL Web App kamu.';
                 return;
             }
 
@@ -936,8 +774,7 @@
             statusEl.innerHTML = '⏳ Memeriksa folder "Detektif Angka"...';
 
             try {
-                // Apps Script doGet mendukung CORS, jadi bisa pakai fetch biasa
-                const response = await fetch(settings.url + '?action=checkFolder');
+                const response = await fetch(DRIVE_URL + '?action=checkFolder');
                 const data = await response.json();
 
                 if (data.success) {
@@ -947,13 +784,6 @@
                         📁 Nama: <strong>${data.folderName}</strong><br>
                         🔗 <a href="${data.folderUrl}" target="_blank">Buka folder di Google Drive</a>
                     `;
-                    // Simpan info folder untuk referensi
-                    localStorage.setItem('folderInfo', JSON.stringify({
-                        folderId: data.folderId,
-                        folderName: data.folderName,
-                        folderUrl: data.folderUrl,
-                        checkedAt: new Date().toISOString()
-                    }));
                 } else {
                     statusEl.className = 'folder-status show error';
                     statusEl.innerHTML = '✗ Gagal: ' + (data.error || 'Unknown error');
@@ -1051,11 +881,10 @@
 
         async function generateAndSendPDF() {
             const status = document.getElementById('pdfStatus');
-            const settings = JSON.parse(localStorage.getItem('driveSettings') || '{}');
 
-            if (!settings.url) {
+            if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
                 status.className = 'folder-status show error';
-                status.innerHTML = '⚠️ URL Web App belum diatur. Klik <strong>"Pengaturan Google Drive Guru"</strong> terlebih dahulu.';
+                status.innerHTML = '⚠️ URL Web App belum diatur di kode HTML. Silakan buka file HTML dengan text editor dan isi variabel <code>DRIVE_URL</code>.';
                 return;
             }
 
@@ -1083,9 +912,8 @@
 
                 status.innerHTML = '⏳ PDF berhasil dibuat. Mengirim ke folder "Detektif Angka"...';
 
-                // Kirim ke Apps Script (folder dibuat otomatis di sisi server)
                 try {
-                    await fetch(settings.url, {
+                    await fetch(DRIVE_URL, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'text/plain' },
@@ -1105,12 +933,6 @@
                         📁 Folder: <strong>Detektif Angka</strong><br>
                         📊 Nilai: <strong>${info.nilai}</strong>
                     `;
-
-                    // Tampilkan link folder jika ada
-                    const folderInfo = JSON.parse(localStorage.getItem('folderInfo') || 'null');
-                    if (folderInfo && folderInfo.folderUrl) {
-                        status.innerHTML += `<br>🔗 <a href="${folderInfo.folderUrl}" target="_blank" style="color:#2ed573; text-decoration:underline;">Buka folder di Google Drive</a>`;
-                    }
                 } catch (err) {
                     status.className = 'folder-status show error';
                     status.innerHTML = '✗ Gagal mengirim ke Drive. PDF diunduh sebagai cadangan.<br><small>' + err.message + '</small>';
@@ -1143,4 +965,4 @@
         }
     </script>
 </body>
-  </html>
+</html>
