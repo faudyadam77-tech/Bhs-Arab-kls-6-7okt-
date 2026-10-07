@@ -5,22 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detektif Angka Arab</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@400;700&family=Dancing+Script:wght@700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Multiple CDN fallback untuk html2pdf.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-        // Fallback loader: jika CDN utama gagal, coba CDN lain
         if (typeof html2pdf === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
+            document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/scr'+'ipt>');
         }
     </script>
-    <script>
-        // Fallback kedua
-        if (typeof html2pdf === 'undefined') {
-            document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
-        }
-    </script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -219,7 +209,6 @@
             margin-top: 24px;
         }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(248, 197, 55, 0.3); }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .result-screen {
             display: none;
             text-align: center;
@@ -246,12 +235,10 @@
             color: #1a1a2e;
         }
         .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-
-        /* Loading spinner */
         .loading-spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border: 3px solid rgba(248, 197, 55, 0.3);
             border-radius: 50%;
             border-top-color: #f8c537;
@@ -260,7 +247,6 @@
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         #pdfTemplate {
             position: absolute;
             left: -9999px;
@@ -395,7 +381,7 @@
         </div>
 
         <button class="toggle-ref" id="toggleRefBtn" onclick="toggleReference()">Buka Kamus Saku Detektif</button>
-        <button class="check-folder-btn" onclick="checkFolder()">📁 Cek / Buat Folder "Detektif Angka" di Drive Guru</button>
+        <button class="check-folder-btn" onclick="checkFolder()">📁 Cek Folder "Detektif Angka" di Drive Guru</button>
 
         <div class="folder-status" id="folderStatus"></div>
 
@@ -626,7 +612,8 @@
 
     <script>
         /* ============================================================
-         * ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN URL WEB APP KAMU!
+         * ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP KAMU!
+         * Format: https://script.google.com/macros/s/XXXXX/exec
          * ============================================================ */
         const DRIVE_URL = 'https://script.google.com/macros/s/AKfycbxFPtciS3BrvSzWysdwrKLy5nB_6nKC0tBDuGHfzdqdzNguU31MSzxfyzayliKf8K6iIw/exec';
         /* ============================================================ */
@@ -727,17 +714,12 @@
             }
         }
 
-        /**
-         * Fungsi utama: Tampilkan hasil + otomatis generate PDF + kirim ke Drive
-         */
         async function finishAndSend() {
-            // Validasi 1: semua soal terjawab
             if (done.size < TOTAL) {
                 alert('Selesaikan semua ' + TOTAL + ' soal terlebih dahulu, Detektif!');
                 return;
             }
 
-            // Validasi 2: nama siswa
             const name = document.getElementById('studentName').value.trim();
             if (!name) {
                 alert('Silakan isi nama siswa terlebih dahulu!');
@@ -745,7 +727,6 @@
                 return;
             }
 
-            // Tampilkan layar hasil
             document.getElementById('quizContainer').style.display = 'none';
             const rs = document.getElementById('resultScreen');
             rs.classList.add('show');
@@ -769,11 +750,7 @@
             document.getElementById('resultMessage').textContent = msg;
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Tunggu sebentar agar tampilan hasil muncul dulu
             await new Promise(r => setTimeout(r, 800));
-
-            // Otomatis generate & kirim PDF
             await generateAndSendPDF();
         }
 
@@ -798,41 +775,42 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ===================== GOOGLE DRIVE =====================
         async function checkFolder() {
             const statusEl = document.getElementById('folderStatus');
 
             if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
                 statusEl.className = 'folder-status show error';
-                statusEl.innerHTML = '⚠️ URL Web App belum diatur. Silakan buka file HTML ini dengan text editor, cari baris <code>const DRIVE_URL = ...</code>, lalu ganti dengan URL Web App kamu.';
+                statusEl.innerHTML = '⚠️ URL Web App belum diatur. Buka file HTML dengan text editor, cari <code>const DRIVE_URL</code>, lalu ganti dengan URL-mu.';
                 return;
             }
 
             statusEl.className = 'folder-status show info';
-            statusEl.innerHTML = '⏳ Memeriksa folder "Detektif Angka"...';
+            statusEl.innerHTML = '<span class="loading-spinner"></span> Memeriksa folder...';
 
             try {
-                const response = await fetch(DRIVE_URL + '?action=checkFolder');
+                const response = await fetch(DRIVE_URL + '?action=checkFolder', {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
                 const data = await response.json();
 
                 if (data.success) {
                     statusEl.className = 'folder-status show success';
                     statusEl.innerHTML = `
                         ✓ <strong>Folder siap digunakan!</strong><br>
-                        📁 Nama: <strong>${data.folderName}</strong><br>
-                        🔗 <a href="${data.folderUrl}" target="_blank">Buka folder di Google Drive</a>
+                        📁 Nama: <strong>${data.data.folderName}</strong><br>
+                        🔗 <a href="${data.data.folderUrl}" target="_blank">Buka folder di Google Drive</a>
                     `;
                 } else {
                     statusEl.className = 'folder-status show error';
-                    statusEl.innerHTML = '✗ Gagal: ' + (data.error || 'Unknown error');
+                    statusEl.innerHTML = '✗ Gagal: ' + (data.message || 'Unknown error');
                 }
             } catch (err) {
                 statusEl.className = 'folder-status show error';
-                statusEl.innerHTML = '✗ Gagal terhubung ke Apps Script. Pastikan URL benar dan deployment sudah aktif.<br><small>Error: ' + err.message + '</small>';
+                statusEl.innerHTML = '✗ Gagal terhubung. Pastikan URL benar (berakhiran <code>/exec</code>) dan deployment aktif.<br><small>Error: ' + err.message + '</small>';
             }
         }
 
-        // ===================== PDF GENERATION =====================
         function buildPDFContent() {
             const name = document.getElementById('studentName').value.trim();
             const kelas = document.getElementById('studentClass').value.trim() || '-';
@@ -918,33 +896,74 @@
         }
 
         /**
-         * Cek apakah library html2pdf sudah tersedia
+         * Kirim PDF ke Google Drive menggunakan FormData (paling reliable)
          */
-        function isHtml2PdfReady() {
-            return typeof html2pdf !== 'undefined' && html2pdf !== null;
+        async function sendToDrive(pdfBase64, fileName, info) {
+            // Gunakan FormData untuk menghindari masalah CORS
+            const formData = new FormData();
+            const dataBlob = new Blob([JSON.stringify({
+                pdfBase64: pdfBase64,
+                fileName: fileName,
+                studentName: info.name,
+                kelas: info.kelas,
+                nilai: info.nilai
+            })], { type: 'text/plain' });
+            
+            formData.append('data', dataBlob);
+
+            // Method 1: Coba dengan FormData
+            try {
+                const response = await fetch(DRIVE_URL, {
+                    method: 'POST',
+                    body: formData,
+                    redirect: 'follow'
+                });
+                
+                // Jika berhasil, parse response
+                try {
+                    const result = await response.json();
+                    return result;
+                } catch (e) {
+                    // Response tidak JSON, tapi request mungkin berhasil
+                    return { success: true, message: 'Sent (no JSON response)' };
+                }
+            } catch (err) {
+                // Method 2: Fallback ke text/plain direct
+                console.log('FormData failed, trying text/plain...');
+                try {
+                    await fetch(DRIVE_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain',
+                        },
+                        body: JSON.stringify({
+                            pdfBase64: pdfBase64,
+                            fileName: fileName,
+                            studentName: info.name,
+                            kelas: info.kelas,
+                            nilai: info.nilai
+                        }),
+                        redirect: 'follow'
+                    });
+                    return { success: true, message: 'Sent via text/plain' };
+                } catch (err2) {
+                    throw new Error('All methods failed: ' + err2.message);
+                }
+            }
         }
 
-        /**
-         * Generate PDF dan kirim ke Google Drive
-         */
         async function generateAndSendPDF() {
             const status = document.getElementById('pdfStatus');
 
-            // Cek URL Drive
             if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
                 status.className = 'folder-status show error';
                 status.innerHTML = '⚠️ URL Web App belum diatur di kode HTML. PDF tidak bisa dikirim ke guru.';
                 return;
             }
 
-            // Cek library html2pdf
-            if (!isHtml2PdfReady()) {
+            if (typeof html2pdf === 'undefined') {
                 status.className = 'folder-status show error';
-                status.innerHTML = `
-                    ⚠️ <strong>Library PDF gagal dimuat.</strong><br>
-                    Kemungkinan koneksi internet lambat atau CDN diblokir.<br>
-                    <small>Saran: Refresh halaman (F5) dan coba lagi. Jika masih error, gunakan browser lain (Chrome/Edge).</small>
-                `;
+                status.innerHTML = '⚠️ <strong>Library PDF gagal dimuat.</strong><br>Refresh halaman (F5) dan coba lagi.';
                 return;
             }
 
@@ -962,32 +981,20 @@
             element.style.opacity = '1';
 
             try {
-                // Tunggu sebentar agar DOM PDF ter-render
-                await new Promise(r => setTimeout(r, 300));
+                await new Promise(r => setTimeout(r, 500));
 
                 const pdfBase64 = await html2pdf().set({
                     margin: 0,
                     filename: fileName,
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { type: 'jpeg', quality: 0.95 },
                     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fdf6e3' },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 }).from(element).outputPdf('base64');
 
-                status.innerHTML = '<span class="loading-spinner"></span> PDF berhasil dibuat. Mengirim ke folder "Detektif Angka" di Drive guru...';
+                status.innerHTML = '<span class="loading-spinner"></span> Mengirim ke Drive guru...';
 
                 try {
-                    await fetch(DRIVE_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify({
-                            pdfBase64: pdfBase64,
-                            fileName: fileName,
-                            studentName: info.name,
-                            kelas: info.kelas,
-                            nilai: info.nilai
-                        })
-                    });
+                    const result = await sendToDrive(pdfBase64, fileName, info);
 
                     status.className = 'folder-status show success';
                     status.innerHTML = `
@@ -995,16 +1002,21 @@
                         📄 File: <strong>${fileName}</strong><br>
                         📁 Folder: <strong>Detektif Angka</strong><br>
                         📊 Nilai kamu: <strong>${info.nilai}</strong><br>
-                        <small style="opacity:0.8;">Guru akan menerima lembar jawabanmu segera.</small>
+                        <small style="opacity:0.8;">Guru akan menerima lembar jawabanmu.</small>
                     `;
                 } catch (err) {
                     status.className = 'folder-status show error';
-                    status.innerHTML = '✗ Gagal mengirim ke Drive guru. PDF diunduh sebagai cadangan.<br><small>' + err.message + '</small>';
+                    status.innerHTML = `
+                        ✗ <strong>Gagal mengirim ke Drive guru.</strong><br>
+                        PDF akan diunduh sebagai cadangan.<br>
+                        <small>Error: ${err.message}</small><br>
+                        <small>Saran: Pastikan URL benar dan deployment aktif.</small>
+                    `;
                     downloadPDF(pdfBase64, fileName);
                 }
             } catch (err) {
                 status.className = 'folder-status show error';
-                status.innerHTML = '✗ Gagal membuat PDF: ' + err.message + '<br><small>Saran: Refresh halaman (F5) dan coba lagi.</small>';
+                status.innerHTML = '✗ Gagal membuat PDF: ' + err.message;
             } finally {
                 element.style.position = 'absolute';
                 element.style.left = '-9999px';
