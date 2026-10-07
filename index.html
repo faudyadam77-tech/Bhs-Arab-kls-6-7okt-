@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detektif Angka Arab</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@400;700&family=Dancing+Script:wght@700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Multiple CDN fallback untuk html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.min.js"></script>
+    <script>
+        // Fallback loader: jika CDN utama gagal, coba CDN lain
+        if (typeof html2pdf === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
+        }
+    </script>
+    <script>
+        // Fallback kedua
+        if (typeof html2pdf === 'undefined') {
+            document.write('<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/script>');
+        }
+    </script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -204,6 +219,7 @@
             margin-top: 24px;
         }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(248, 197, 55, 0.3); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .result-screen {
             display: none;
             text-align: center;
@@ -216,9 +232,10 @@
         .result-screen h2 { font-size: 1.8em; color: #f8c537; margin-bottom: 12px; }
         .result-screen .final-score { font-size: 3em; font-weight: bold; color: #fff; margin: 16px 0; }
         .result-screen .message { font-size: 1em; color: #a0c4ff; margin-bottom: 24px; line-height: 1.7; }
-        .btn-restart, .btn-pdf {
+        .btn-restart {
             display: inline-block;
             padding: 14px 30px;
+            background: linear-gradient(135deg, #f8c537, #e8a820);
             border: none;
             border-radius: 12px;
             font-size: 1em;
@@ -226,10 +243,24 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 5px;
+            color: #1a1a2e;
         }
-        .btn-restart { background: linear-gradient(135deg, #f8c537, #e8a820); color: #1a1a2e; }
-        .btn-pdf { background: linear-gradient(135deg, #2ed573, #1eae5f); color: #fff; }
-        .btn-restart:hover, .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(248, 197, 55, 0.3);
+            border-radius: 50%;
+            border-top-color: #f8c537;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         #pdfTemplate {
             position: absolute;
             left: -9999px;
@@ -576,16 +607,15 @@
                 <div class="feedback" id="fb14"></div>
             </div>
 
-            <button class="btn-submit" id="submitBtn" onclick="showResults()">Lihat Hasil Misi</button>
+            <button class="btn-submit" id="submitBtn" onclick="finishAndSend()">📤 Lihat Hasil & Kirim PDF ke Guru</button>
         </div>
 
         <div class="result-screen" id="resultScreen">
             <h2 id="resultTitle"></h2>
             <div class="final-score" id="finalScore"></div>
             <div class="message" id="resultMessage"></div>
-            <button class="btn-pdf" onclick="generateAndSendPDF()">📤 Cetak PDF & Kirim ke Drive</button>
+            <div class="folder-status" id="pdfStatus" style="margin: 20px 0; text-align:left;"></div>
             <button class="btn-restart" onclick="resetQuiz()">🔄 Ulangi Misi</button>
-            <div class="folder-status" id="pdfStatus" style="margin-top:20px; text-align:left;"></div>
         </div>
 
     </div>
@@ -597,14 +627,7 @@
     <script>
         /* ============================================================
          * ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN URL WEB APP KAMU!
-         * ============================================================
-         * Cara dapat URL:
-         * 1. Buka script.google.com → buat proyek baru
-         * 2. Paste kode Code.gs yang sudah diberikan
-         * 3. Deploy → New deployment → Web app → Execute as: Me → Anyone → Deploy
-         * 4. Copy URL yang muncul (format: https://script.google.com/macros/s/.../exec)
-         * 5. Paste di bawah ini (ganti PASTE_URL_APPS_SCRIPT_DI_SINI)
-         */
+         * ============================================================ */
         const DRIVE_URL = 'https://script.google.com/macros/s/AKfycbxFPtciS3BrvSzWysdwrKLy5nB_6nKC0tBDuGHfzdqdzNguU31MSzxfyzayliKf8K6iIw/exec';
         /* ============================================================ */
 
@@ -704,17 +727,25 @@
             }
         }
 
-        function showResults() {
+        /**
+         * Fungsi utama: Tampilkan hasil + otomatis generate PDF + kirim ke Drive
+         */
+        async function finishAndSend() {
+            // Validasi 1: semua soal terjawab
             if (done.size < TOTAL) {
                 alert('Selesaikan semua ' + TOTAL + ' soal terlebih dahulu, Detektif!');
                 return;
             }
+
+            // Validasi 2: nama siswa
             const name = document.getElementById('studentName').value.trim();
             if (!name) {
                 alert('Silakan isi nama siswa terlebih dahulu!');
                 document.getElementById('studentName').focus();
                 return;
             }
+
+            // Tampilkan layar hasil
             document.getElementById('quizContainer').style.display = 'none';
             const rs = document.getElementById('resultScreen');
             rs.classList.add('show');
@@ -722,21 +753,28 @@
 
             let title, msg;
             if (correct === TOTAL) {
-                title = 'Master Detektif Arab!';
+                title = '🏆 Master Detektif Arab!';
                 msg = 'Sempurna! Semua kode berhasil dipecahkan. Kamu adalah detektif angka Arab sejati!';
             } else if (correct >= 11) {
-                title = 'Detektif Hebat!';
+                title = '⭐ Detektif Hebat!';
                 msg = 'Luar biasa! Hampir sempurna. Sedikit lagi kamu meraih gelar Master Detektif!';
             } else if (correct >= 7) {
-                title = 'Detektif Pemula';
+                title = '👍 Detektif Pemula';
                 msg = 'Cukup bagus! Kamu sudah paham dasar-dasarnya. Coba lagi untuk hasil lebih baik!';
             } else {
-                title = 'Tetap Semangat, Detektif!';
+                title = '💪 Tetap Semangat, Detektif!';
                 msg = 'Jangan menyerah! Buka kamus sakumu, pelajari polanya, dan coba lagi. Kamu pasti bisa!';
             }
             document.getElementById('resultTitle').textContent = title;
             document.getElementById('resultMessage').textContent = msg;
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Tunggu sebentar agar tampilan hasil muncul dulu
+            await new Promise(r => setTimeout(r, 800));
+
+            // Otomatis generate & kirim PDF
+            await generateAndSendPDF();
         }
 
         function resetQuiz() {
@@ -879,17 +917,39 @@
             return { name, kelas, tanggal, nilai };
         }
 
+        /**
+         * Cek apakah library html2pdf sudah tersedia
+         */
+        function isHtml2PdfReady() {
+            return typeof html2pdf !== 'undefined' && html2pdf !== null;
+        }
+
+        /**
+         * Generate PDF dan kirim ke Google Drive
+         */
         async function generateAndSendPDF() {
             const status = document.getElementById('pdfStatus');
 
+            // Cek URL Drive
             if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
                 status.className = 'folder-status show error';
-                status.innerHTML = '⚠️ URL Web App belum diatur di kode HTML. Silakan buka file HTML dengan text editor dan isi variabel <code>DRIVE_URL</code>.';
+                status.innerHTML = '⚠️ URL Web App belum diatur di kode HTML. PDF tidak bisa dikirim ke guru.';
+                return;
+            }
+
+            // Cek library html2pdf
+            if (!isHtml2PdfReady()) {
+                status.className = 'folder-status show error';
+                status.innerHTML = `
+                    ⚠️ <strong>Library PDF gagal dimuat.</strong><br>
+                    Kemungkinan koneksi internet lambat atau CDN diblokir.<br>
+                    <small>Saran: Refresh halaman (F5) dan coba lagi. Jika masih error, gunakan browser lain (Chrome/Edge).</small>
+                `;
                 return;
             }
 
             status.className = 'folder-status show info';
-            status.innerHTML = '⏳ Membuat PDF...';
+            status.innerHTML = '<span class="loading-spinner"></span> Membuat lembar jawaban PDF...';
 
             const info = buildPDFContent();
             const fileName = `Lembar_Jawaban_${info.name.replace(/\s+/g,'_')}_${info.tanggal.replace(/\s+/g,'_')}.pdf`;
@@ -902,6 +962,9 @@
             element.style.opacity = '1';
 
             try {
+                // Tunggu sebentar agar DOM PDF ter-render
+                await new Promise(r => setTimeout(r, 300));
+
                 const pdfBase64 = await html2pdf().set({
                     margin: 0,
                     filename: fileName,
@@ -910,7 +973,7 @@
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 }).from(element).outputPdf('base64');
 
-                status.innerHTML = '⏳ PDF berhasil dibuat. Mengirim ke folder "Detektif Angka"...';
+                status.innerHTML = '<span class="loading-spinner"></span> PDF berhasil dibuat. Mengirim ke folder "Detektif Angka" di Drive guru...';
 
                 try {
                     await fetch(DRIVE_URL, {
@@ -928,19 +991,20 @@
 
                     status.className = 'folder-status show success';
                     status.innerHTML = `
-                        ✓ <strong>PDF berhasil dikirim ke Google Drive!</strong><br>
+                        ✓ <strong>PDF berhasil dikirim ke Google Drive guru!</strong><br>
                         📄 File: <strong>${fileName}</strong><br>
                         📁 Folder: <strong>Detektif Angka</strong><br>
-                        📊 Nilai: <strong>${info.nilai}</strong>
+                        📊 Nilai kamu: <strong>${info.nilai}</strong><br>
+                        <small style="opacity:0.8;">Guru akan menerima lembar jawabanmu segera.</small>
                     `;
                 } catch (err) {
                     status.className = 'folder-status show error';
-                    status.innerHTML = '✗ Gagal mengirim ke Drive. PDF diunduh sebagai cadangan.<br><small>' + err.message + '</small>';
+                    status.innerHTML = '✗ Gagal mengirim ke Drive guru. PDF diunduh sebagai cadangan.<br><small>' + err.message + '</small>';
                     downloadPDF(pdfBase64, fileName);
                 }
             } catch (err) {
                 status.className = 'folder-status show error';
-                status.innerHTML = '✗ Gagal membuat PDF: ' + err.message;
+                status.innerHTML = '✗ Gagal membuat PDF: ' + err.message + '<br><small>Saran: Refresh halaman (F5) dan coba lagi.</small>';
             } finally {
                 element.style.position = 'absolute';
                 element.style.left = '-9999px';
