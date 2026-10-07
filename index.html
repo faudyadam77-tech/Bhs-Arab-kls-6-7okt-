@@ -3,626 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detektif Angka Arab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@400;700&family=Dancing+Script:wght@700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
-        if (typeof html2pdf === 'undefined') {
-            document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"><\/scr'+'ipt>');
-        }
-    </script>
+    <title>Detektif Angka Arab Pro</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans, Caveat (Handwritten teacher grade), and Amiri (Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            color: #e0e0e0;
-            padding: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header {
-            text-align: center;
-            padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .arabic-font {
+            font-family: 'Amiri', serif;
         }
-        .header h1 { font-size: 1.9em; color: #f8c537; margin-bottom: 10px; }
-        .header p { font-size: 0.95em; color: #a0c4ff; line-height: 1.7; }
-        .student-info {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: rgba(248, 197, 55, 0.08);
-            border: 1px solid rgba(248, 197, 55, 0.25);
-            border-radius: 12px;
-        }
-        .student-info input {
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.95em;
-        }
-        .student-info input:focus { outline: none; border-color: #f8c537; }
-        .student-info input::placeholder { color: #888; }
-        .score-board {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 14px;
-            background: rgba(248, 197, 55, 0.08);
-            border-radius: 12px;
-            border: 1px solid rgba(248, 197, 55, 0.25);
-            margin-bottom: 16px;
-        }
-        .score-item { text-align: center; }
-        .score-item .label { font-size: 0.75em; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .score-item .value { font-size: 1.7em; font-weight: bold; color: #f8c537; }
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 3px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #f8c537, #ff6b6b);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-        .toggle-ref, .check-folder-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 10px;
-            border: 1px solid;
-        }
-        .toggle-ref {
-            background: rgba(160, 196, 255, 0.08);
-            border-color: rgba(160, 196, 255, 0.25);
-            color: #a0c4ff;
-        }
-        .check-folder-btn {
-            background: rgba(248, 197, 55, 0.08);
-            border-color: rgba(248, 197, 55, 0.25);
-            color: #f8c537;
-        }
-        .toggle-ref:hover { background: rgba(160, 196, 255, 0.15); }
-        .check-folder-btn:hover { background: rgba(248, 197, 55, 0.15); }
-        .folder-status {
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            font-size: 0.9em;
-            display: none;
-            line-height: 1.6;
-        }
-        .folder-status.show { display: block; }
-        .folder-status.success {
-            background: rgba(46, 213, 115, 0.1);
-            border: 1px solid rgba(46, 213, 115, 0.3);
-            color: #2ed573;
-        }
-        .folder-status.error {
-            background: rgba(255, 71, 87, 0.1);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: #ff6b7a;
-        }
-        .folder-status.info {
-            background: rgba(248, 197, 55, 0.1);
-            border: 1px solid rgba(248, 197, 55, 0.3);
-            color: #f8c537;
-        }
-        .folder-status a { color: inherit; text-decoration: underline; font-weight: bold; }
-        .reference-table {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        .reference-table h3 { color: #f8c537; margin-bottom: 14px; text-align: center; font-size: 1em; }
-        .ref-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-        .ref-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 6px;
-            font-size: 0.85em;
-        }
-        .ref-item .num { font-weight: bold; color: #f8c537; min-width: 22px; }
-        .ref-item .arabic-text { color: #a0c4ff; direction: rtl; font-size: 1.1em; font-family: 'Amiri', serif; }
-        .ref-item .latin { color: #777; font-style: italic; font-size: 0.9em; }
-        .hidden { display: none; }
-        .challenge-title {
-            font-size: 1.15em;
-            color: #f8c537;
-            margin-bottom: 14px;
-            margin-top: 10px;
-            padding: 10px 16px;
-            background: rgba(248, 197, 55, 0.07);
-            border-left: 4px solid #f8c537;
-            border-radius: 0 8px 8px 0;
-        }
-        .challenge-desc { font-size: 0.85em; color: #888; margin: -8px 0 14px 20px; font-style: italic; }
-        .question-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 16px;
-            transition: border-color 0.3s ease;
-        }
-        .question-card:hover { border-color: rgba(248, 197, 55, 0.2); }
-        .question-label { font-size: 0.75em; color: #f8c537; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-        .question-text { font-size: 1.05em; color: #fff; margin-bottom: 18px; line-height: 1.7; }
-        .question-text .arabic { font-size: 1.3em; color: #a0c4ff; direction: rtl; font-family: 'Amiri', serif; display: inline-block; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .option-btn {
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 2px solid rgba(255, 255, 255, 0.12);
-            border-radius: 10px;
-            color: #d0d0d0;
-            font-size: 0.95em;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-align: center;
-            line-height: 1.5;
-        }
-        .option-btn:hover { background: rgba(248, 197, 55, 0.08); border-color: rgba(248, 197, 55, 0.5); transform: translateY(-1px); }
-        .option-btn.correct { background: rgba(46, 213, 115, 0.15); border-color: #2ed573; color: #2ed573; }
-        .option-btn.wrong { background: rgba(255, 71, 87, 0.15); border-color: #ff4757; color: #ff4757; }
-        .option-btn.disabled { pointer-events: none; opacity: 0.5; }
-        .option-btn.disabled.correct { opacity: 1; }
-        .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88em; line-height: 1.6; display: none; }
-        .feedback.show { display: block; }
-        .feedback.correct { background: rgba(46, 213, 115, 0.08); border: 1px solid rgba(46, 213, 115, 0.25); color: #2ed573; }
-        .feedback.wrong { background: rgba(255, 71, 87, 0.08); border: 1px solid rgba(255, 71, 87, 0.25); color: #ff6b7a; }
-        .btn-submit {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #f8c537, #e8a820);
-            border: none;
-            border-radius: 12px;
-            color: #1a1a2e;
-            font-size: 1.05em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 24px;
-        }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(248, 197, 55, 0.3); }
-        .result-screen {
-            display: none;
-            text-align: center;
-            padding: 40px 24px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-        .result-screen.show { display: block; }
-        .result-screen h2 { font-size: 1.8em; color: #f8c537; margin-bottom: 12px; }
-        .result-screen .final-score { font-size: 3em; font-weight: bold; color: #fff; margin: 16px 0; }
-        .result-screen .message { font-size: 1em; color: #a0c4ff; margin-bottom: 24px; line-height: 1.7; }
-        .btn-restart {
-            display: inline-block;
-            padding: 14px 30px;
-            background: linear-gradient(135deg, #f8c537, #e8a820);
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-            color: #1a1a2e;
-        }
-        .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .loading-spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(248, 197, 55, 0.3);
-            border-radius: 50%;
-            border-top-color: #f8c537;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #pdfTemplate {
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 800px;
-            background: #fdf6e3;
-            font-family: 'Kalam', cursive;
-            color: #2c2c2c;
-            padding: 40px 50px;
-        }
-        .pdf-paper {
-            background-image: repeating-linear-gradient(transparent, transparent 31px, #d4c5a0 32px);
-            min-height: 1000px;
-            padding: 20px 0;
-        }
-        .pdf-header {
-            text-align: center;
-            border-bottom: 3px double #8b4513;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-        .pdf-header h2 { font-family: 'Kalam', cursive; font-size: 28px; color: #8b4513; margin-bottom: 5px; }
-        .pdf-header .subtitle { font-size: 16px; color: #555; font-style: italic; }
-        .pdf-student-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-        .pdf-student-info div { border-bottom: 1px solid #8b4513; padding: 4px 8px; }
-        .pdf-student-info .label-pdf { color: #8b4513; font-weight: bold; }
-        .pdf-grade-box {
-            position: absolute;
-            top: 40px;
-            right: 50px;
-            width: 110px;
-            height: 110px;
-            border: 4px solid #c0392b;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transform: rotate(-8deg);
-            background: rgba(255,255,255,0.5);
-        }
-        .pdf-grade-box .nilai-angka {
+        .handwritten-grade {
             font-family: 'Caveat', cursive;
-            font-size: 56px;
-            font-weight: 700;
-            color: #c0392b;
-            line-height: 1;
         }
-        .pdf-grade-box .nilai-label { font-size: 12px; color: #c0392b; font-weight: bold; }
-        .pdf-section-title {
-            font-family: 'Kalam', cursive;
-            font-size: 20px;
-            color: #8b4513;
-            margin: 20px 0 10px;
-            font-weight: bold;
-            border-bottom: 1px dashed #8b4513;
-            padding-bottom: 4px;
-        }
-        .pdf-question { margin-bottom: 10px; font-size: 16px; line-height: 1.6; padding: 6px 0; }
-        .pdf-question .q-num { font-weight: bold; color: #8b4513; margin-right: 8px; }
-        .pdf-answer { display: inline-block; margin-left: 10px; padding: 2px 10px; font-family: 'Caveat', cursive; font-size: 20px; }
-        .pdf-answer.benar { color: #27ae60; }
-        .pdf-answer.salah { color: #c0392b; text-decoration: line-through; }
-        .pdf-answer.koreksi { color: #2980b9; font-weight: bold; }
-        .pdf-mark { display: inline-block; margin-left: 8px; font-size: 22px; font-weight: bold; }
-        .pdf-mark.cek { color: #27ae60; }
-        .pdf-mark.silang { color: #c0392b; }
-        .pdf-footer {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            border-top: 2px solid #8b4513;
-            padding-top: 15px;
-        }
-        .pdf-comment { font-family: 'Kalam', cursive; font-size: 20px; color: #c0392b; max-width: 50%; line-height: 1.4; }
-        .pdf-signature { text-align: center; font-family: 'Dancing Script', cursive; font-size: 24px; color: #2c3e50; }
-        .pdf-signature .garis-ttd {
-            border-top: 1px solid #2c3e50;
-            width: 180px;
-            margin-top: 4px;
-            padding-top: 4px;
-            font-family: 'Kalam', cursive;
-            font-size: 14px;
-            color: #555;
-        }
-        @media (max-width: 600px) {
-            .options { grid-template-columns: 1fr; }
-            .ref-grid { grid-template-columns: 1fr; }
-            .header h1 { font-size: 1.4em; }
-            .score-board { gap: 16px; }
-            .student-info { grid-template-columns: 1fr; }
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .question-card {
+                break-inside: avoid;
+                border: 1px solid #cbd5e1 !important;
+                background: #f8fafc !important;
+                color: #0f172a !important;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 min-h-screen text-slate-100 p-4 sm:p-6 md:p-8">
 
-        <div class="header">
-            <h1>Detektif Angka Arab</h1>
-            <p>Selamat datang, Detektif! Pecahkan 14 teka-teki angka 1-20 dalam bahasa Arab.<br>Hitung dulu, baru cari kode Arab-nya. Jangan sampai salah!</p>
+    <div id="customModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center">
+            <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">⚠️</div>
+            <h3 id="modalTitle" class="text-xl font-bold text-amber-400 mb-2">Pemberitahuan Detektif</h3>
+            <p id="modalMessage" class="text-slate-300 text-sm mb-6 leading-relaxed">Pesan modal...</p>
+            <button onclick="closeModal()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 font-bold rounded-xl shadow-lg hover:brightness-110 transition cursor-pointer">Dimengerti</button>
         </div>
+    </div>
 
-        <div class="student-info">
-            <input type="text" id="studentName" placeholder="Nama Lengkap Siswa">
-            <input type="text" id="studentClass" placeholder="Kelas (cth: 6A)" value="6">
-        </div>
-
-        <div class="score-board">
-            <div class="score-item">
-                <div class="label">Benar</div>
-                <div class="value" id="correctCount">0</div>
-            </div>
-            <div class="score-item">
-                <div class="label">Salah</div>
-                <div class="value" id="wrongCount">0</div>
-            </div>
-            <div class="score-item">
-                <div class="label">Dijawab</div>
-                <div class="value" id="currentQ">0/14</div>
+    <div class="max-w-3xl mx-auto mb-6 bg-slate-900/80 backdrop-blur-md border border-amber-500/20 rounded-2xl p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md">🕵️‍♂️</div>
+            <div>
+                <h2 class="font-bold text-amber-400 text-sm sm:text-base">Misi Detektif Angka Arab</h2>
+                <p class="text-xs text-slate-400">Isi identitas sebelum mengirim laporan ke Guru</p>
             </div>
         </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="text" id="studentName" placeholder="Nama Lengkap Siswa" class="bg-slate-800/80 border border-slate-700 text-xs sm:text-sm rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-400 w-full sm:w-44" />
+            <input type="text" id="studentClass" placeholder="Kelas" class="bg-slate-800/80 border border-slate-700 text-xs sm:text-sm rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-400 w-20 sm:w-24" />
+        </div>
+    </div>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center p-6 sm:p-8 bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-3xl mb-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-3 tracking-wide">Detektif Angka Arab Pro</h1>
+            <p class="text-xs sm:text-sm text-indigo-200/80 max-w-xl mx-auto leading-relaxed">
+                Pecahkan 14 teka-teki angka 1-20 dalam bahasa Arab.<br class="hidden sm:inline">Hitung dengan cermat, lalu pilih sandi Arab yang tepat.
+            </p>
         </div>
 
-        <button class="toggle-ref" id="toggleRefBtn" onclick="toggleReference()">Buka Kamus Saku Detektif</button>
-        <button class="check-folder-btn" onclick="checkFolder()">📁 Cek Folder "Detektif Angka" di Drive Guru</button>
+        <div class="grid grid-cols-3 gap-3 p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl mb-6 shadow-inner">
+            <div class="text-center bg-slate-900/40 p-3 rounded-xl border border-amber-500/10">
+                <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest font-bold">Benar</div>
+                <div class="text-xl sm:text-3xl font-black text-emerald-400 mt-1" id="correctCount">0</div>
+            </div>
+            <div class="text-center bg-slate-900/40 p-3 rounded-xl border border-amber-500/10">
+                <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest font-bold">Salah</div>
+                <div class="text-xl sm:text-3xl font-black text-rose-400 mt-1" id="wrongCount">0</div>
+            </div>
+            <div class="text-center bg-slate-900/40 p-3 rounded-xl border border-amber-500/10">
+                <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest font-bold">Dijawab</div>
+                <div class="text-xl sm:text-3xl font-black text-amber-400 mt-1" id="currentQ">0/14</div>
+            </div>
+        </div>
 
-        <div class="folder-status" id="folderStatus"></div>
+        <div class="w-full bg-slate-800/80 h-2.5 rounded-full mb-6 overflow-hidden border border-slate-700/50">
+            <div class="h-full bg-gradient-to-r from-amber-400 to-rose-500 rounded-full transition-all duration-500" id="progressFill" style="width: 0%"></div>
+        </div>
 
-        <div class="reference-table hidden" id="referenceTable">
-            <h3>Kamus Saku Detektif (Angka 1-20)</h3>
-            <div class="ref-grid">
-                <div class="ref-item"><span class="num">1</span><span class="arabic-text">وَاحِدٌ</span><span class="latin">Wahid</span></div>
-                <div class="ref-item"><span class="num">11</span><span class="arabic-text">أَحَدَ عَشَرَ</span><span class="latin">Ahada 'asyar</span></div>
-                <div class="ref-item"><span class="num">2</span><span class="arabic-text">اثْنَانِ</span><span class="latin">Itsnan</span></div>
-                <div class="ref-item"><span class="num">12</span><span class="arabic-text">اثْنَا عَشَرَ</span><span class="latin">Itsna 'asyar</span></div>
-                <div class="ref-item"><span class="num">3</span><span class="arabic-text">ثَلَاثَةٌ</span><span class="latin">Tsalatsah</span></div>
-                <div class="ref-item"><span class="num">13</span><span class="arabic-text">ثَلَاثَةَ عَشَرَ</span><span class="latin">Tsalatsa 'asyar</span></div>
-                <div class="ref-item"><span class="num">4</span><span class="arabic-text">أَرْبَعَةٌ</span><span class="latin">Arba'ah</span></div>
-                <div class="ref-item"><span class="num">14</span><span class="arabic-text">أَرْبَعَةَ عَشَرَ</span><span class="latin">Arba'a 'asyar</span></div>
-                <div class="ref-item"><span class="num">5</span><span class="arabic-text">خَمْسَةٌ</span><span class="latin">Khamsah</span></div>
-                <div class="ref-item"><span class="num">15</span><span class="arabic-text">خَمْسَةَ عَشَرَ</span><span class="latin">Khamsa 'asyar</span></div>
-                <div class="ref-item"><span class="num">6</span><span class="arabic-text">سِتَّةٌ</span><span class="latin">Sittah</span></div>
-                <div class="ref-item"><span class="num">16</span><span class="arabic-text">سِتَّةَ عَشَرَ</span><span class="latin">Sitta 'asyar</span></div>
-                <div class="ref-item"><span class="num">7</span><span class="arabic-text">سَبْعَةٌ</span><span class="latin">Sab'ah</span></div>
-                <div class="ref-item"><span class="num">17</span><span class="arabic-text">سَبْعَةَ عَشَرَ</span><span class="latin">Sab'a 'asyar</span></div>
-                <div class="ref-item"><span class="num">8</span><span class="arabic-text">ثَمَانِيَةٌ</span><span class="latin">Tsamaniyah</span></div>
-                <div class="ref-item"><span class="num">18</span><span class="arabic-text">ثَمَانِيَةَ عَشَرَ</span><span class="latin">Tsamania 'asyar</span></div>
-                <div class="ref-item"><span class="num">9</span><span class="arabic-text">تِسْعَةٌ</span><span class="latin">Tis'ah</span></div>
-                <div class="ref-item"><span class="num">19</span><span class="arabic-text">تِسْعَةَ عَشَرَ</span><span class="latin">Tis'a 'asyar</span></div>
-                <div class="ref-item"><span class="num">10</span><span class="arabic-text">عَشَرَةٌ</span><span class="latin">'Asyrah</span></div>
-                <div class="ref-item"><span class="num">20</span><span class="arabic-text">عِشْرُوْنَ</span><span class="latin">'Ishrun</span></div>
+        <button class="w-full py-3.5 px-5 bg-indigo-900/40 border border-indigo-500/30 hover:bg-indigo-900/60 rounded-2xl text-indigo-200 font-semibold text-sm transition shadow-lg flex items-center justify-center gap-2 mb-6 cursor-pointer no-print" id="toggleRefBtn" onclick="toggleReference()">
+            <span>📖</span> Buka Kamus Saku Detektif (1-20)
+        </button>
+
+        <div class="hidden bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-6 shadow-xl" id="referenceTable">
+            <h3 class="text-amber-400 font-bold text-center mb-4 text-sm uppercase tracking-wider">Kamus Saku Detektif (Angka 1-20)</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">1</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">وَاحِدٌ</span><span class="text-slate-400 italic">Wahid</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">11</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">أَحَدَ عَشَرَ</span><span class="text-slate-400 italic">Ahada 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">2</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">اثْنَانِ</span><span class="text-slate-400 italic">Itsnan</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">12</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">اثْنَا عَشَرَ</span><span class="text-slate-400 italic">Itsna 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">3</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">ثَلَاثَةٌ</span><span class="text-slate-400 italic">Tsalatsah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">13</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">ثَلَاثَةَ عَشَرَ</span><span class="text-slate-400 italic">Tsalatsa 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">4</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">أَرْبَعَةٌ</span><span class="text-slate-400 italic">Arba'ah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">14</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">أَرْبَعَةَ عَشَرَ</span><span class="text-slate-400 italic">Arba'a 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">5</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">خَمْسَةٌ</span><span class="text-slate-400 italic">Khamsah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">15</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">خَمْسَةَ عَشَرَ</span><span class="text-slate-400 italic">Khamsa 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">6</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">سِتَّةٌ</span><span class="text-slate-400 italic">Sittah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">16</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">سِتَّةَ عَشَرَ</span><span class="text-slate-400 italic">Sitta 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">7</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">سَبْعَةٌ</span><span class="text-slate-400 italic">Sab'ah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">17</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">سَبْعَةَ عَشَرَ</span><span class="text-slate-400 italic">Sab'a 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">8</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">ثَمَانِيَةٌ</span><span class="text-slate-400 italic">Tsamaniyah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">18</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">ثَمَانِيَةَ عَشَرَ</span><span class="text-slate-400 italic">Tsamania 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">9</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">تِسْعَةٌ</span><span class="text-slate-400 italic">Tis'ah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">19</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">تِسْعَةَ عَشَرَ</span><span class="text-slate-400 italic">Tis'a 'asyar</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">10</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">عَشَرَةٌ</span><span class="text-slate-400 italic">'Asyrah</span></div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/40 text-xs"><span class="font-bold text-amber-400 w-6">20</span><span class="arabic-font text-indigo-200 text-base" dir="rtl">عِشْرُوْنَ</span><span class="text-slate-400 italic">'Ishrun</span></div>
             </div>
         </div>
 
         <div id="quizContainer">
 
-            <div class="challenge-title">Tantangan 1: Sandi Matematika</div>
-            <div class="challenge-desc">Hitung hasilnya, lalu pilih jawaban dalam bahasa Arab!</div>
+            <!-- ==================== TANTANGAN 1 ==================== -->
+            <div class="font-bold text-amber-400 text-base sm:text-lg mb-2 mt-6 p-3 bg-amber-500/10 border-l-4 border-amber-400 rounded-r-xl">Tantangan 1: Sandi Matematika</div>
+            <div class="text-xs sm:text-sm text-slate-400 italic mb-4 ml-2">Hitung hasilnya, lalu pilih jawaban dalam bahasa Arab!</div>
 
-            <div class="question-card" id="q1">
-                <div class="question-label">Soal 1</div>
-                <div class="question-text">5 + 7 = ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(1,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
-                    <button class="option-btn" onclick="check(1,this,'b')">b. اثْنَا عَشَرَ (Itsna 'asyar)</button>
-                    <button class="option-btn" onclick="check(1,this,'c')">c. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(1,this,'d')">d. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q1">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 1</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">5 + 7 = ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(1,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(1,this,'b')">b. اثْنَا عَشَرَ (Itsna 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(1,this,'c')">c. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(1,this,'d')">d. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb1"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb1"></div>
             </div>
 
-            <div class="question-card" id="q2">
-                <div class="question-label">Soal 2</div>
-                <div class="question-text">20 - 8 = ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(2,this,'a')">a. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(2,this,'b')">b. سِتَّةَ عَشَرَ (Sitta 'asyar)</button>
-                    <button class="option-btn" onclick="check(2,this,'c')">c. اثْنَا عَشَرَ (Itsna 'asyar)</button>
-                    <button class="option-btn" onclick="check(2,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q2">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 2</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">20 - 8 = ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(2,this,'a')">a. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(2,this,'b')">b. سِتَّةَ عَشَرَ (Sitta 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(2,this,'c')">c. اثْنَا عَشَرَ (Itsna 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(2,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
                 </div>
-                <div class="feedback" id="fb2"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb2"></div>
             </div>
 
-            <div class="question-card" id="q3">
-                <div class="question-label">Soal 3</div>
-                <div class="question-text">(10 x 2) - 5 = ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(3,this,'a')">a. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(3,this,'b')">b. سَبْعَةَ عَشَرَ (Sab'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(3,this,'c')">c. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
-                    <button class="option-btn" onclick="check(3,this,'d')">d. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q3">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 3</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">(10 x 2) - 5 = ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(3,this,'a')">a. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(3,this,'b')">b. سَبْعَةَ عَشَرَ (Sab'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(3,this,'c')">c. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(3,this,'d')">d. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb3"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb3"></div>
             </div>
 
-            <div class="question-card" id="q4">
-                <div class="question-label">Soal 4</div>
-                <div class="question-text">15 + 5 = ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(4,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
-                    <button class="option-btn" onclick="check(4,this,'b')">b. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(4,this,'c')">c. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
-                    <button class="option-btn" onclick="check(4,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q4">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 4</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">15 + 5 = ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(4,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(4,this,'b')">b. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(4,this,'c')">c. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(4,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
                 </div>
-                <div class="feedback" id="fb4"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb4"></div>
             </div>
 
-            <div class="challenge-title">Tantangan 2: Pola Tersembunyi</div>
-            <div class="challenge-desc">Temukan angka selanjutnya dari pola, lalu pilih dalam bahasa Arab!</div>
+            <!-- ==================== TANTANGAN 2 ==================== -->
+            <div class="font-bold text-amber-400 text-base sm:text-lg mb-2 mt-8 p-3 bg-amber-500/10 border-l-4 border-amber-400 rounded-r-xl">Tantangan 2: Pola Tersembunyi</div>
+            <div class="text-xs sm:text-sm text-slate-400 italic mb-4 ml-2">Temukan angka selanjutnya dari pola, lalu pilih dalam bahasa Arab!</div>
 
-            <div class="question-card" id="q5">
-                <div class="question-label">Soal 5</div>
-                <div class="question-text">2, 4, 6, 8, ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(5,this,'a')">a. تِسْعَةٌ (Tis'ah)</button>
-                    <button class="option-btn" onclick="check(5,this,'b')">b. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
-                    <button class="option-btn" onclick="check(5,this,'c')">c. عَشَرَةٌ ('Asyrah)</button>
-                    <button class="option-btn" onclick="check(5,this,'d')">d. ثَمَانِيَةٌ (Tsamaniyah)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q5">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 5</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">2, 4, 6, 8, ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(5,this,'a')">a. تِسْعَةٌ (Tis'ah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(5,this,'b')">b. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(5,this,'c')">c. عَشَرَةٌ ('Asyrah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(5,this,'d')">d. ثَمَانِيَةٌ (Tsamaniyah)</button>
                 </div>
-                <div class="feedback" id="fb5"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb5"></div>
             </div>
 
-            <div class="question-card" id="q6">
-                <div class="question-label">Soal 6</div>
-                <div class="question-text">20, 18, 16, 14, ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(6,this,'a')">a. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(6,this,'b')">b. عَشَرَةٌ ('Asyrah)</button>
-                    <button class="option-btn" onclick="check(6,this,'c')">c. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
-                    <button class="option-btn" onclick="check(6,this,'d')">d. اثْنَا عَشَرَ (Itsna 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q6">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 6</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">20, 18, 16, 14, ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(6,this,'a')">a. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(6,this,'b')">b. عَشَرَةٌ ('Asyrah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(6,this,'c')">c. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(6,this,'d')">d. اثْنَا عَشَرَ (Itsna 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb6"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb6"></div>
             </div>
 
-            <div class="question-card" id="q7">
-                <div class="question-label">Soal 7</div>
-                <div class="question-text">2, 5, 8, 11, ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(7,this,'a')">a. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(7,this,'b')">b. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(7,this,'c')">c. سِتَّةَ عَشَرَ (Sitta 'asyar)</button>
-                    <button class="option-btn" onclick="check(7,this,'d')">d. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q7">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 7</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">20, 16, 12, 8, ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(7,this,'a')">a. ثَلَاثَةٌ (Tsalatsah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(7,this,'b')">b. خَمْسَةٌ (Khamsah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(7,this,'c')">c. أَرْبَعَةٌ (Arba'ah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(7,this,'d')">d. سِتَّةٌ (Sittah)</button>
                 </div>
-                <div class="feedback" id="fb7"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb7"></div>
             </div>
 
-            <div class="question-card" id="q8">
-                <div class="question-label">Soal 8</div>
-                <div class="question-text">3, 6, 9, 12, ......</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(8,this,'a')">a. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(8,this,'b')">b. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(8,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(8,this,'d')">d. سِتَّةَ عَشَرَ (Sitta 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q8">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 8</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">3, 6, 9, 12, ......</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(8,this,'a')">a. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(8,this,'b')">b. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(8,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(8,this,'d')">d. سِتَّةَ عَشَرَ (Sitta 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb8"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb8"></div>
             </div>
 
-            <div class="challenge-title">Tantangan 3: Teka-Teki "Siapa Aku?"</div>
-            <div class="challenge-desc">Baca petunjuknya, temukan angkanya, lalu pilih dalam bahasa Arab!</div>
+            <!-- ==================== TANTANGAN 3 ==================== -->
+            <div class="font-bold text-amber-400 text-base sm:text-lg mb-2 mt-8 p-3 bg-amber-500/10 border-l-4 border-amber-400 rounded-r-xl">Tantangan 3: Teka-Teki "Siapa Aku?"</div>
+            <div class="text-xs sm:text-sm text-slate-400 italic mb-4 ml-2">Baca petunjuknya, temukan angkanya, lalu pilih dalam bahasa Arab!</div>
 
-            <div class="question-card" id="q9">
-                <div class="question-label">Soal 9</div>
-                <div class="question-text">"Aku adalah angka ganjil antara 10 dan 20. Jika kamu menambahkanku dengan 4, hasilnya adalah 17. Angka berapakah aku?"</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(9,this,'a')">a. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
-                    <button class="option-btn" onclick="check(9,this,'b')">b. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(9,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(9,this,'d')">d. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q9">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 9</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">"Aku adalah angka ganjil antara 10 dan 20. Jika kamu menambahkanku dengan 4, hasilnya adalah 17. Angka berapakah aku?"</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(9,this,'a')">a. أَحَدَ عَشَرَ (Ahada 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(9,this,'b')">b. ثَلَاثَةَ عَشَرَ (Tsalatsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(9,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(9,this,'d')">d. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb9"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb9"></div>
             </div>
 
-            <div class="question-card" id="q10">
-                <div class="question-label">Soal 10</div>
-                <div class="question-text">"Aku adalah angka genap. Aku adalah setengah dari 24, dan aku adalah dua kali lipat dari 6. Siapa aku?"</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(10,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
-                    <button class="option-btn" onclick="check(10,this,'b')">b. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(10,this,'c')">c. اثْنَا عَشَرَ (Itsna 'asyar)</button>
-                    <button class="option-btn" onclick="check(10,this,'d')">d. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q10">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 10</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">"Aku adalah angka genap. Aku adalah setengah dari 24, dan aku adalah dua kali lipat dari 6. Siapa aku?"</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(10,this,'a')">a. عَشَرَةٌ ('Asyrah)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(10,this,'b')">b. أَرْبَعَةَ عَشَرَ (Arba'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(10,this,'c')">c. اثْنَا عَشَرَ (Itsna 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(10,this,'d')">d. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
                 </div>
-                <div class="feedback" id="fb10"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb10"></div>
             </div>
 
-            <div class="question-card" id="q11">
-                <div class="question-label">Soal 11</div>
-                <div class="question-text">"Aku adalah angka terbesar dalam daftar 1-20. Jika aku dikurangi 1, aku menjadi 'Tis'a 'asyar'. Siapa aku?"</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(11,this,'a')">a. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
-                    <button class="option-btn" onclick="check(11,this,'b')">b. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
-                    <button class="option-btn" onclick="check(11,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
-                    <button class="option-btn" onclick="check(11,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q11">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 11</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">"Aku adalah angka terbesar dalam daftar 1-20. Jika aku dikurangi 1, aku menjadi 'Tis'a 'asyar'. Siapa aku?"</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(11,this,'a')">a. تِسْعَةَ عَشَرَ (Tis'a 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(11,this,'b')">b. ثَمَانِيَةَ عَشَرَ (Tsamania 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(11,this,'c')">c. خَمْسَةَ عَشَرَ (Khamsa 'asyar)</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(11,this,'d')">d. عِشْرُوْنَ ('Ishrun)</button>
                 </div>
-                <div class="feedback" id="fb11"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb11"></div>
             </div>
 
-            <div class="challenge-title">Tantangan 4: Decode Pesan Rahasia</div>
-            <div class="challenge-desc">Terjemahkan kode Arab berikut, lalu jawab pertanyaannya!</div>
+            <!-- ==================== TANTANGAN 4 ==================== -->
+            <div class="font-bold text-amber-400 text-base sm:text-lg mb-2 mt-8 p-3 bg-amber-500/10 border-l-4 border-amber-400 rounded-r-xl">Tantangan 4: Decode Pesan Rahasia</div>
+            <div class="text-xs sm:text-sm text-slate-400 italic mb-4 ml-2">Terjemahkan kode Arab berikut, lalu jawab pertanyaannya!</div>
 
-            <div class="question-card" id="q12">
-                <div class="question-label">Soal 12</div>
-                <div class="question-text">Kode: <span class="arabic">وَاحِدٌ + خَمْسَةٌ + تِسْعَةٌ + عِشْرُوْنَ</span><br><br>Terjemahan angka yang benar adalah ...</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(12,this,'a')">a. 1 + 5 + 9 + 20</button>
-                    <button class="option-btn" onclick="check(12,this,'b')">b. 1 + 5 + 10 + 20</button>
-                    <button class="option-btn" onclick="check(12,this,'c')">c. 1 + 15 + 9 + 20</button>
-                    <button class="option-btn" onclick="check(12,this,'d')">d. 11 + 5 + 9 + 20</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q12">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 12</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">Kode: <span class="arabic-font text-indigo-300 text-xl" dir="rtl">وَاحِدٌ + خَمْسَةٌ + تِسْعَةٌ + عِشْرُوْنَ</span><br><br>Terjemahan angka yang benar adalah ...</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(12,this,'a')">a. 1 + 5 + 9 + 20</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(12,this,'b')">b. 1 + 5 + 10 + 20</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(12,this,'c')">c. 1 + 15 + 9 + 20</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(12,this,'d')">d. 11 + 5 + 9 + 20</button>
                 </div>
-                <div class="feedback" id="fb12"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb12"></div>
             </div>
 
-            <div class="question-card" id="q13">
-                <div class="question-label">Soal 13</div>
-                <div class="question-text">Dari soal nomor 12, berapakah hasil penjumlahannya?</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(13,this,'a')">a. 30</button>
-                    <button class="option-btn" onclick="check(13,this,'b')">b. 25</button>
-                    <button class="option-btn" onclick="check(13,this,'c')">c. 35</button>
-                    <button class="option-btn" onclick="check(13,this,'d')">d. 40</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q13">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 13</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">Dari soal nomor 12, berapakah hasil penjumlahannya?</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(13,this,'a')">a. 30</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(13,this,'b')">b. 25</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(13,this,'c')">c. 35</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(13,this,'d')">d. 40</button>
                 </div>
-                <div class="feedback" id="fb13"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb13"></div>
             </div>
 
-            <div class="question-card" id="q14">
-                <div class="question-label">Soal 14</div>
-                <div class="question-text">Jika hasil penjumlahan pada soal nomor 13 dikalikan 2, berapakah hasilnya?</div>
-                <div class="options">
-                    <button class="option-btn" onclick="check(14,this,'a')">a. 60</button>
-                    <button class="option-btn" onclick="check(14,this,'b')">b. 65</button>
-                    <button class="option-btn" onclick="check(14,this,'c')">c. 75</button>
-                    <button class="option-btn" onclick="check(14,this,'d')">d. 70</button>
+            <div class="question-card bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 mb-5 shadow-lg transition hover:border-amber-500/30" id="q14">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Soal 14</div>
+                <div class="text-base sm:text-lg font-medium text-white mb-4 leading-relaxed">Jika hasil penjumlahan pada soal nomor 13 dikalikan 2, berapakah hasilnya?</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(14,this,'a')">a. 60</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(14,this,'b')">b. 65</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(14,this,'c')">c. 75</button>
+                    <button class="option-btn p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl text-slate-200 text-xs sm:text-sm text-left font-medium transition hover:bg-amber-500/10 hover:border-amber-500/50 cursor-pointer" onclick="check(14,this,'d')">d. 70</button>
                 </div>
-                <div class="feedback" id="fb14"></div>
+                <div class="feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden" id="fb14"></div>
             </div>
 
-            <button class="btn-submit" id="submitBtn" onclick="finishAndSend()">📤 Lihat Hasil & Kirim PDF ke Guru</button>
+            <button class="w-full py-4 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 text-slate-950 font-extrabold rounded-2xl text-base shadow-xl hover:brightness-110 transition mt-8 cursor-pointer no-print" onclick="showResults()">Lihat Hasil Misi & Cetak PDF</button>
         </div>
 
-        <div class="result-screen" id="resultScreen">
-            <h2 id="resultTitle"></h2>
-            <div class="final-score" id="finalScore"></div>
-            <div class="message" id="resultMessage"></div>
-            <div class="folder-status" id="pdfStatus" style="margin: 20px 0; text-align:left;"></div>
-            <button class="btn-restart" onclick="resetQuiz()">🔄 Ulangi Misi</button>
+        <div class="hidden bg-slate-900/90 backdrop-blur-xl border border-amber-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl text-center" id="resultScreen">
+            
+            <div class="mb-6 pb-6 border-b border-slate-800 text-left hidden print-only">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">LEMBAR JAWABAN TUGAS SISWA</h2>
+                        <p class="text-xs text-slate-600">Mata Pelajaran: Bahasa Arab - Detektif Angka Arab (1-20)</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-600">Tanggal: <span id="reportDate"></span></p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-gray-100 p-3 rounded-lg grid grid-cols-2 gap-4 text-xs text-slate-800 font-semibold">
+                    <div>Nama Siswa: <span id="reportStudentName" class="font-normal text-black"></span></div>
+                    <div>Kelas: <span id="reportStudentClass" class="font-normal text-black"></span></div>
+                </div>
+            </div>
+
+            <!-- Handwritten teacher grade stamp -->
+            <div class="relative inline-block my-4">
+                <div class="absolute -inset-2 bg-rose-500/10 rounded-full blur-xl"></div>
+                <div class="relative bg-gradient-to-br from-amber-500/20 to-yellow-600/20 border-2 border-dashed border-amber-400/50 rounded-3xl p-6 px-10 shadow-inner">
+                    <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-1">Nilai Guru</div>
+                    <div id="handwrittenGrade" class="handwritten-grade text-6xl sm:text-7xl font-bold text-rose-500 transform -rotate-6 drop-shadow-md">95</div>
+                    <div id="teacherNote" class="handwritten-grade text-lg text-indigo-300 mt-2 transform rotate-2">"Luar biasa, pertahankan prestasimu!"</div>
+                </div>
+            </div>
+
+            <h2 id="resultTitle" class="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-4 mb-2"></h2>
+            <div class="text-3xl sm:text-4xl font-black text-white mb-3" id="finalScore"></div>
+            <div class="text-sm sm:text-base text-indigo-200/90 max-w-lg mx-auto mb-8 leading-relaxed" id="resultMessage"></div>
+
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center no-print">
+                <button onclick="printPDFReport()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl shadow-lg hover:brightness-110 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>🖨️</span> Cetak / Simpan PDF Lembar Soal & Nilai
+                </button>
+                <button onclick="sendToGoogleDrive()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:brightness-110 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>📤</span> Kirim PDF ke Google Drive Guru
+                </button>
+                <button class="w-full sm:w-auto px-6 py-3.5 bg-slate-800 border border-slate-700 text-slate-200 font-bold rounded-xl hover:bg-slate-700 transition cursor-pointer" onclick="resetQuiz()">
+                    Ulangi Misi
+                </button>
+            </div>
         </div>
 
-    </div>
-
-    <div id="pdfTemplate">
-        <div class="pdf-paper" id="pdfContent"></div>
     </div>
 
     <script>
-        /* ============================================================
-         * ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP KAMU!
-         * Format: https://script.google.com/macros/s/XXXXX/exec
-         * ============================================================ */
-        const DRIVE_URL = 'https://script.google.com/macros/s/AKfycbxFPtciS3BrvSzWysdwrKLy5nB_6nKC0tBDuGHfzdqdzNguU31MSzxfyzayliKf8K6iIw/exec';
-        /* ============================================================ */
+        // ==========================================
+        // URL WEB APP APPS SCRIPT GURU (PASTE DI SINI)
+        // ==========================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzL0f1LC_IzBKPORGi359FYPWAuE9mPag9XRQOhuUUwu5FyRB72BeXexQr8fWsz4nT7Pw/exec";
 
         const TOTAL = 14;
 
         const key = {
             1:  'b', 2:  'c', 3:  'd', 4:  'd',
-            5:  'c', 6:  'd', 7:  'b', 8:  'c',
+            5:  'c', 6:  'd', 7:  'c', 8:  'c',
             9:  'b', 10: 'c', 11: 'd',
             12: 'a', 13: 'c', 14: 'd'
         };
@@ -634,7 +379,7 @@
             4:  '15 + 5 = 20. Dalam bahasa Arab: عِشْرُوْنَ (\'Ishrun).',
             5:  'Pola +2: 2, 4, 6, 8, 10. Angka 10 = عَشَرَةٌ (\'Asyrah).',
             6:  'Pola -2: 20, 18, 16, 14, 12. Angka 12 = اثْنَا عَشَرَ (Itsna \'asyar).',
-            7:  'Pola +3: 2, 5, 8, 11, 14. Angka 14 = أَرْبَعَةَ عَشَرَ (Arba\'a \'asyar).',
+            7:  'Pola -4: 20, 16, 12, 8, 4. Angka 4 = أَرْبَعَةٌ (Arba\'ah).',
             8:  'Pola kelipatan 3: 3, 6, 9, 12, 15. Angka 15 = خَمْسَةَ عَشَرَ (Khamsa \'asyar).',
             9:  '17 - 4 = 13. Angka ganjil antara 10-20. Jawaban: 13 = ثَلَاثَةَ عَشَرَ (Tsalatsa \'asyar).',
             10: 'Setengah dari 24 = 12. Dua kali lipat 6 = 12. Jawaban: 12 = اثْنَا عَشَرَ (Itsna \'asyar).',
@@ -644,56 +389,51 @@
             14: '35 x 2 = 70.'
         };
 
-        const questions = {
-            1:  { text: '5 + 7 = ......', answer: 'b. اثْنَا عَشَرَ (Itsna \'asyar)' },
-            2:  { text: '20 - 8 = ......', answer: 'c. اثْنَا عَشَرَ (Itsna \'asyar)' },
-            3:  { text: '(10 x 2) - 5 = ......', answer: 'd. خَمْسَةَ عَشَرَ (Khamsa \'asyar)' },
-            4:  { text: '15 + 5 = ......', answer: 'd. عِشْرُوْنَ (\'Ishrun)' },
-            5:  { text: '2, 4, 6, 8, ......', answer: 'c. عَشَرَةٌ (\'Asyrah)' },
-            6:  { text: '20, 18, 16, 14, ......', answer: 'd. اثْنَا عَشَرَ (Itsna \'asyar)' },
-            7:  { text: '2, 5, 8, 11, ......', answer: 'b. أَرْبَعَةَ عَشَرَ (Arba\'a \'asyar)' },
-            8:  { text: '3, 6, 9, 12, ......', answer: 'c. خَمْسَةَ عَشَرَ (Khamsa \'asyar)' },
-            9:  { text: '"Aku angka ganjil antara 10-20. Jika ditambah 4, hasilnya 17."', answer: 'b. ثَلَاثَةَ عَشَرَ (Tsalatsa \'asyar)' },
-            10: { text: '"Aku setengah dari 24, dan dua kali lipat dari 6."', answer: 'c. اثْنَا عَشَرَ (Itsna \'asyar)' },
-            11: { text: '"Aku angka terbesar 1-20. Jika dikurangi 1, jadi Tis\'a \'asyar."', answer: 'd. عِشْرُوْنَ (\'Ishrun)' },
-            12: { text: 'Terjemahan kode: وَاحِدٌ + خَمْسَةٌ + تِسْعَةٌ + عِشْرُوْنَ', answer: 'a. 1 + 5 + 9 + 20' },
-            13: { text: 'Dari soal no.12, berapakah hasil penjumlahannya?', answer: 'c. 35' },
-            14: { text: 'Jika hasil soal no.13 dikalikan 2, berapakah hasilnya?', answer: 'd. 70' }
-        };
-
         let correct = 0, wrong = 0, done = new Set();
         let studentAnswers = {};
+
+        function showModal(title, msg) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = msg;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
 
         function check(n, btn, pick) {
             if (done.has(n)) return;
             done.add(n);
+            studentAnswers[n] = { pick: pick, isCorrect: pick === key[n] };
 
             const card = document.getElementById('q' + n);
             const btns = card.querySelectorAll('.option-btn');
             const fb = document.getElementById('fb' + n);
             const isCorrect = pick === key[n];
 
-            studentAnswers[n] = {
-                picked: pick,
-                correct: key[n],
-                isCorrect: isCorrect,
-                answerText: btn.innerText.trim()
-            };
-
             btns.forEach(b => {
-                b.classList.add('disabled');
-                const letter = b.getAttribute('onclick').match(/'([a-d])'/)[1];
-                if (letter === key[n]) b.classList.add('correct');
+                b.classList.add('pointer-events-none', 'opacity-60');
+                const onclickAttr = b.getAttribute('onclick');
+                if (onclickAttr) {
+                    const match = onclickAttr.match(/'([a-d])'/);
+                    if (match && match[1] === key[n]) {
+                        b.classList.remove('opacity-60', 'bg-slate-800/60', 'border-slate-700/60');
+                        b.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold', 'opacity-100');
+                    }
+                }
             });
 
             if (isCorrect) {
                 correct++;
-                fb.className = 'feedback show correct';
+                fb.className = 'feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed block bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium';
                 fb.textContent = 'Benar! ' + explain[n];
             } else {
                 wrong++;
-                fb.className = 'feedback show wrong';
+                fb.className = 'feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed block bg-rose-500/10 border border-rose-500/30 text-rose-300 font-medium';
                 fb.textContent = 'Kurang tepat. ' + explain[n];
+                btn.classList.remove('bg-slate-800/60', 'border-slate-700/60');
+                btn.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300', 'opacity-100');
             }
 
             document.getElementById('correctCount').textContent = correct;
@@ -707,337 +447,124 @@
             const b = document.getElementById('toggleRefBtn');
             if (t.classList.contains('hidden')) {
                 t.classList.remove('hidden');
-                b.textContent = 'Sembunyikan Kamus Saku';
+                b.innerHTML = '<span>📖</span> Sembunyikan Kamus Saku';
             } else {
                 t.classList.add('hidden');
-                b.textContent = 'Buka Kamus Saku Detektif';
+                b.innerHTML = '<span>📖</span> Buka Kamus Saku Detektif (1-20)';
             }
         }
 
-        async function finishAndSend() {
-            if (done.size < TOTAL) {
-                alert('Selesaikan semua ' + TOTAL + ' soal terlebih dahulu, Detektif!');
+        function showResults() {
+            const name = document.getElementById('studentName').value.trim();
+            const className = document.getElementById('studentClass').value.trim();
+
+            if (!name || !className) {
+                showModal('Identitas Belum Lengkap', 'Mohon isi "Nama Lengkap Siswa" dan "Kelas" terlebih dahulu di bagian atas sebelum melihat hasil dan mengirim tugas!');
                 return;
             }
 
-            const name = document.getElementById('studentName').value.trim();
-            if (!name) {
-                alert('Silakan isi nama siswa terlebih dahulu!');
-                document.getElementById('studentName').focus();
+            if (done.size < TOTAL) {
+                showModal('Misi Belum Selesai', 'Selesaikan semua ' + TOTAL + ' soal terlebih dahulu, Detektif!');
                 return;
             }
 
             document.getElementById('quizContainer').style.display = 'none';
             const rs = document.getElementById('resultScreen');
-            rs.classList.add('show');
-            document.getElementById('finalScore').textContent = correct + ' / ' + TOTAL;
+            rs.classList.remove('hidden');
 
-            let title, msg;
+            let score100 = Math.round((correct / TOTAL) * 100);
+            document.getElementById('finalScore').textContent = correct + ' / ' + TOTAL + ' (Skor: ' + score100 + ')';
+
+            document.getElementById('reportStudentName').textContent = name;
+            document.getElementById('reportStudentClass').textContent = className;
+            document.getElementById('reportDate').textContent = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const gradeEl = document.getElementById('handwrittenGrade');
+            const noteEl = document.getElementById('teacherNote');
+            gradeEl.textContent = score100;
+
+            let title, msg, teacherComment;
             if (correct === TOTAL) {
-                title = '🏆 Master Detektif Arab!';
+                title = 'Master Detektif Arab!';
                 msg = 'Sempurna! Semua kode berhasil dipecahkan. Kamu adalah detektif angka Arab sejati!';
+                teacherComment = '"Sempurna! 100 Nilai Sempurna untuk Detektif hebat! 🌟"';
             } else if (correct >= 11) {
-                title = '⭐ Detektif Hebat!';
+                title = 'Detektif Hebat!';
                 msg = 'Luar biasa! Hampir sempurna. Sedikit lagi kamu meraih gelar Master Detektif!';
+                teacherComment = '"Kerja bagus! Sedikit lagi capai sempurna. Pertahankan!"';
             } else if (correct >= 7) {
-                title = '👍 Detektif Pemula';
+                title = 'Detektif Pemula';
                 msg = 'Cukup bagus! Kamu sudah paham dasar-dasarnya. Coba lagi untuk hasil lebih baik!';
+                teacherComment = '"Cukup baik, pelajari lagi kamus saku ya nak!"';
             } else {
-                title = '💪 Tetap Semangat, Detektif!';
+                title = 'Tetap Semangat, Detektif!';
                 msg = 'Jangan menyerah! Buka kamus sakumu, pelajari polanya, dan coba lagi. Kamu pasti bisa!';
+                teacherComment = '"Ayo belajar lebih giat lagi, kamu pasti bisa!"';
             }
             document.getElementById('resultTitle').textContent = title;
             document.getElementById('resultMessage').textContent = msg;
+            noteEl.textContent = teacherComment;
+        }
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            await new Promise(r => setTimeout(r, 800));
-            await generateAndSendPDF();
+        function printPDFReport() {
+            window.print();
+        }
+
+        async function sendToGoogleDrive() {
+            const name = document.getElementById('studentName').value.trim();
+            const className = document.getElementById('studentClass').value.trim();
+            const score100 = Math.round((correct / TOTAL) * 100);
+
+            if (WEB_APP_URL.includes("AKfycby...")) {
+                showModal('URL Web App Belum Diatur', 'Mohon ganti variabel WEB_APP_URL pada kode dengan URL Web App Apps Script guru Anda.');
+                return;
+            }
+
+            showModal('Mengirim Laporan', 'Sedang mengirim laporan tugas ke Google Drive Guru, mohon tunggu sebentar...');
+
+            const payload = {
+                name: name,
+                studentClass: className,
+                score: score100,
+                correctCount: correct,
+                wrongCount: wrong,
+                answers: studentAnswers
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                showModal('Berhasil Dikirim!', 'Laporan tugas an. ' + name + ' (Kelas ' + className + ') dengan skor ' + score100 + ' berhasil dikirim ke Google Drive Guru!');
+            } catch (error) {
+                showModal('Gagal Mengirim', 'Terjadi kesalahan koneksi saat mengirim ke Google Drive: ' + error.message);
+            }
         }
 
         function resetQuiz() {
-            correct = 0; wrong = 0; done.clear(); studentAnswers = {};
+            correct = 0; wrong = 0; done.clear();
+            studentAnswers = {};
             document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('resultScreen').classList.remove('show');
+            document.getElementById('resultScreen').classList.add('hidden');
             for (let i = 1; i <= TOTAL; i++) {
                 const card = document.getElementById('q' + i);
                 card.querySelectorAll('.option-btn').forEach(b => {
-                    b.classList.remove('correct', 'wrong', 'disabled');
+                    b.classList.remove('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'bg-rose-500/20', 'border-rose-500', 'text-rose-300', 'pointer-events-none', 'opacity-60', 'opacity-100');
+                    b.classList.add('bg-slate-800/60', 'border-slate-700/60', 'text-slate-200');
                 });
                 const fb = document.getElementById('fb' + i);
-                fb.className = 'feedback';
+                fb.className = 'feedback mt-3 p-3 rounded-xl text-xs sm:text-sm leading-relaxed hidden';
                 fb.textContent = '';
             }
             document.getElementById('correctCount').textContent = 0;
             document.getElementById('wrongCount').textContent = 0;
             document.getElementById('currentQ').textContent = '0/' + TOTAL;
             document.getElementById('progressFill').style.width = '0%';
-            document.getElementById('pdfStatus').classList.remove('show');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function checkFolder() {
-            const statusEl = document.getElementById('folderStatus');
-
-            if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
-                statusEl.className = 'folder-status show error';
-                statusEl.innerHTML = '⚠️ URL Web App belum diatur. Buka file HTML dengan text editor, cari <code>const DRIVE_URL</code>, lalu ganti dengan URL-mu.';
-                return;
-            }
-
-            statusEl.className = 'folder-status show info';
-            statusEl.innerHTML = '<span class="loading-spinner"></span> Memeriksa folder...';
-
-            try {
-                const response = await fetch(DRIVE_URL + '?action=checkFolder', {
-                    method: 'GET',
-                    redirect: 'follow'
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    statusEl.className = 'folder-status show success';
-                    statusEl.innerHTML = `
-                        ✓ <strong>Folder siap digunakan!</strong><br>
-                        📁 Nama: <strong>${data.data.folderName}</strong><br>
-                        🔗 <a href="${data.data.folderUrl}" target="_blank">Buka folder di Google Drive</a>
-                    `;
-                } else {
-                    statusEl.className = 'folder-status show error';
-                    statusEl.innerHTML = '✗ Gagal: ' + (data.message || 'Unknown error');
-                }
-            } catch (err) {
-                statusEl.className = 'folder-status show error';
-                statusEl.innerHTML = '✗ Gagal terhubung. Pastikan URL benar (berakhiran <code>/exec</code>) dan deployment aktif.<br><small>Error: ' + err.message + '</small>';
-            }
-        }
-
-        function buildPDFContent() {
-            const name = document.getElementById('studentName').value.trim();
-            const kelas = document.getElementById('studentClass').value.trim() || '-';
-            const tanggal = new Date().toLocaleDateString('id-ID', { 
-                day: 'numeric', month: 'long', year: 'numeric' 
-            });
-
-            const nilai = Math.round((correct / TOTAL) * 100);
-
-            let komentar = '';
-            if (nilai === 100) komentar = 'Luar biasa! Sempurna. Pertahankan!';
-            else if (nilai >= 85) komentar = 'Hebat! Kamu hampir menguasai semuanya.';
-            else if (nilai >= 70) komentar = 'Bagus! Terus berlatih agar lebih mahir.';
-            else if (nilai >= 50) komentar = 'Cukup baik. Ayo pelajari lagi polanya!';
-            else komentar = 'Jangan menyerah! Buka kamus dan coba lagi ya.';
-
-            const sections = [
-                { title: 'Tantangan 1: Sandi Matematika', range: [1, 4] },
-                { title: 'Tantangan 2: Pola Tersembunyi', range: [5, 8] },
-                { title: 'Tantangan 3: Teka-Teki "Siapa Aku?"', range: [9, 11] },
-                { title: 'Tantangan 4: Decode Pesan Rahasia', range: [12, 14] }
-            ];
-
-            let questionsHTML = '';
-            sections.forEach(sec => {
-                questionsHTML += `<div class="pdf-section-title">${sec.title}</div>`;
-                for (let i = sec.range[0]; i <= sec.range[1]; i++) {
-                    const sa = studentAnswers[i];
-                    const isCorrect = sa.isCorrect;
-                    const markClass = isCorrect ? 'cek' : 'silang';
-                    const markSymbol = isCorrect ? '✓' : '✗';
-                    const ansClass = isCorrect ? 'benar' : 'salah';
-
-                    let correctionHTML = '';
-                    if (!isCorrect) {
-                        const correctBtn = document.querySelector(`#q${i} .option-btn.correct`);
-                        const correctText = correctBtn ? correctBtn.innerText.trim() : '';
-                        correctionHTML = `<span class="pdf-answer koreksi">→ ${correctText}</span>`;
-                    }
-
-                    questionsHTML += `
-                        <div class="pdf-question">
-                            <span class="q-num">${i}.</span>
-                            <span>${questions[i].text}</span><br>
-                            <span style="margin-left:24px; color:#555;">Jawaban:</span>
-                            <span class="pdf-answer ${ansClass}">${sa.answerText}</span>
-                            <span class="pdf-mark ${markClass}">${markSymbol}</span>
-                            ${correctionHTML}
-                        </div>
-                    `;
-                }
-            });
-
-            const html = `
-                <div class="pdf-grade-box">
-                    <div class="nilai-label">Nilai</div>
-                    <div class="nilai-angka">${nilai}</div>
-                </div>
-                <div class="pdf-header">
-                    <h2>LEMBAR JAWABAN SISWA</h2>
-                    <div class="subtitle">Detektif Angka Arab — Bilangan 1-20</div>
-                </div>
-                <div class="pdf-student-info">
-                    <div><span class="label-pdf">Nama:</span> ${name}</div>
-                    <div><span class="label-pdf">Kelas:</span> ${kelas}</div>
-                    <div><span class="label-pdf">Tanggal:</span> ${tanggal}</div>
-                    <div><span class="label-pdf">Jumlah Benar:</span> ${correct} dari ${TOTAL}</div>
-                </div>
-                ${questionsHTML}
-                <div class="pdf-footer">
-                    <div class="pdf-comment">
-                        <strong>Komentar Guru:</strong><br>
-                        ${komentar}
-                    </div>
-                    <div class="pdf-signature">
-                        <div style="font-family: 'Dancing Script', cursive; font-size: 28px;">Guru Bahasa Arab</div>
-                        <div class="garis-ttd">tanda tangan</div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('pdfContent').innerHTML = html;
-            return { name, kelas, tanggal, nilai };
-        }
-
-        /**
-         * Kirim PDF ke Google Drive menggunakan FormData (paling reliable)
-         */
-        async function sendToDrive(pdfBase64, fileName, info) {
-            // Gunakan FormData untuk menghindari masalah CORS
-            const formData = new FormData();
-            const dataBlob = new Blob([JSON.stringify({
-                pdfBase64: pdfBase64,
-                fileName: fileName,
-                studentName: info.name,
-                kelas: info.kelas,
-                nilai: info.nilai
-            })], { type: 'text/plain' });
-            
-            formData.append('data', dataBlob);
-
-            // Method 1: Coba dengan FormData
-            try {
-                const response = await fetch(DRIVE_URL, {
-                    method: 'POST',
-                    body: formData,
-                    redirect: 'follow'
-                });
-                
-                // Jika berhasil, parse response
-                try {
-                    const result = await response.json();
-                    return result;
-                } catch (e) {
-                    // Response tidak JSON, tapi request mungkin berhasil
-                    return { success: true, message: 'Sent (no JSON response)' };
-                }
-            } catch (err) {
-                // Method 2: Fallback ke text/plain direct
-                console.log('FormData failed, trying text/plain...');
-                try {
-                    await fetch(DRIVE_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'text/plain',
-                        },
-                        body: JSON.stringify({
-                            pdfBase64: pdfBase64,
-                            fileName: fileName,
-                            studentName: info.name,
-                            kelas: info.kelas,
-                            nilai: info.nilai
-                        }),
-                        redirect: 'follow'
-                    });
-                    return { success: true, message: 'Sent via text/plain' };
-                } catch (err2) {
-                    throw new Error('All methods failed: ' + err2.message);
-                }
-            }
-        }
-
-        async function generateAndSendPDF() {
-            const status = document.getElementById('pdfStatus');
-
-            if (DRIVE_URL === 'PASTE_URL_APPS_SCRIPT_DI_SINI' || !DRIVE_URL) {
-                status.className = 'folder-status show error';
-                status.innerHTML = '⚠️ URL Web App belum diatur di kode HTML. PDF tidak bisa dikirim ke guru.';
-                return;
-            }
-
-            if (typeof html2pdf === 'undefined') {
-                status.className = 'folder-status show error';
-                status.innerHTML = '⚠️ <strong>Library PDF gagal dimuat.</strong><br>Refresh halaman (F5) dan coba lagi.';
-                return;
-            }
-
-            status.className = 'folder-status show info';
-            status.innerHTML = '<span class="loading-spinner"></span> Membuat lembar jawaban PDF...';
-
-            const info = buildPDFContent();
-            const fileName = `Lembar_Jawaban_${info.name.replace(/\s+/g,'_')}_${info.tanggal.replace(/\s+/g,'_')}.pdf`;
-
-            const element = document.getElementById('pdfTemplate');
-            element.style.position = 'fixed';
-            element.style.left = '0';
-            element.style.top = '0';
-            element.style.zIndex = '-1';
-            element.style.opacity = '1';
-
-            try {
-                await new Promise(r => setTimeout(r, 500));
-
-                const pdfBase64 = await html2pdf().set({
-                    margin: 0,
-                    filename: fileName,
-                    image: { type: 'jpeg', quality: 0.95 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fdf6e3' },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(element).outputPdf('base64');
-
-                status.innerHTML = '<span class="loading-spinner"></span> Mengirim ke Drive guru...';
-
-                try {
-                    const result = await sendToDrive(pdfBase64, fileName, info);
-
-                    status.className = 'folder-status show success';
-                    status.innerHTML = `
-                        ✓ <strong>PDF berhasil dikirim ke Google Drive guru!</strong><br>
-                        📄 File: <strong>${fileName}</strong><br>
-                        📁 Folder: <strong>Detektif Angka</strong><br>
-                        📊 Nilai kamu: <strong>${info.nilai}</strong><br>
-                        <small style="opacity:0.8;">Guru akan menerima lembar jawabanmu.</small>
-                    `;
-                } catch (err) {
-                    status.className = 'folder-status show error';
-                    status.innerHTML = `
-                        ✗ <strong>Gagal mengirim ke Drive guru.</strong><br>
-                        PDF akan diunduh sebagai cadangan.<br>
-                        <small>Error: ${err.message}</small><br>
-                        <small>Saran: Pastikan URL benar dan deployment aktif.</small>
-                    `;
-                    downloadPDF(pdfBase64, fileName);
-                }
-            } catch (err) {
-                status.className = 'folder-status show error';
-                status.innerHTML = '✗ Gagal membuat PDF: ' + err.message;
-            } finally {
-                element.style.position = 'absolute';
-                element.style.left = '-9999px';
-                element.style.zIndex = 'auto';
-            }
-        }
-
-        function downloadPDF(base64, fileName) {
-            const byteCharacters = atob(base64);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            URL.revokeObjectURL(url);
         }
     </script>
 </body>
